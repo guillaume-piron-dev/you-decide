@@ -80,6 +80,10 @@ references I use myself for the EU and France. Claude answers in your language; 
   - before a file write, they block high-confidence secrets (private keys, cloud and API tokens) and ask for likely
     credentials, `.env` files and destructive SQL in migrations;
   - after a compaction or `/clear`, they re-inject the first 150 lines of `docs/state.md` if it exists.
+  `guard.py` names credential files (`.env`, `.git-credentials`, private keys…) and credential variables only to
+  recognise and block commands that would print them: it never opens, reads or sends any of them. The tests in
+  `tests/` use fake values, `example.org` addresses and variable names such as `API_KEY` only as inputs to the guard;
+  they make no network call.
   They need Python 3.8 or later, found as `python3`, `py -3` or `python`. On Windows, Claude Code runs hooks through
   Git Bash (installed with Git for Windows); the Microsoft Store `python3` shortcut is detected and skipped. They are
   pattern-based: they catch the usual commands and token formats, not every possible one.
@@ -171,7 +175,9 @@ France) y figurent aussi. Claude te répond dans ta langue.
 Il n'envoie rien sur le réseau et ne télécharge rien. Les hooks tournent en local : ils demandent ton accord avant un
 push, une réécriture d'historique, une suppression récursive, du SQL destructif, une publication ou un envoi réseau (les
 appels à `localhost` ne sont pas interrompus), bloquent les commandes courantes qui afficheraient un fichier secret et
-l'écriture de secrets évidents, et réinjectent le fichier d'état après une compaction. Ils demandent Python 3.8 ou plus ;
+l'écriture de secrets évidents, et réinjectent le fichier d'état après une compaction. `guard.py` ne cite les fichiers d'identifiants (`.env`, `.git-credentials`, clés privées…) que pour reconnaître et
+bloquer les commandes qui les afficheraient : il ne les ouvre, ne les lit et ne les envoie jamais. Ils demandent
+Python 3.8 ou plus ;
 sous Windows, Claude Code les exécute via Git Bash. `setup` n'écrit dans ton projet (`CLAUDE.md`, `docs/`, règles de
 permission de `.claude/settings.json`, fusionnées sans jamais assouplir un `deny`) qu'après ton accord sur son plan.
 Ce sont des garde-fous, pas une garantie de sécurité : aucun secret ne doit se trouver dans le dossier du projet.

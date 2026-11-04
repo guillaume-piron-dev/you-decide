@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 — 2026-11-04
+- README: states that `guard.py` names credential files only to block them, and that the tests use fake values
+  and make no network call.
+
 ## 0.2.0 — 2026-11-04
 - The plugin now sits at the repository root, as the Anthropic directory expects; hooks start through small shell
   launchers that pick a working Python (the Microsoft Store `python3` shortcut on Windows is skipped).
