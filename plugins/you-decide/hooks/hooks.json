@@ -1,0 +1,29 @@
+{
+  "description": "You Decide guardrails: ask before network sends and irreversible commands, block secrets written to files, re-inject the state file after a compaction or /clear.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "for p in python3 \"py -3\" python; do $p -c \"import sys; sys.exit(sys.version_info < (3, 8))\" </dev/null >/dev/null 2>&1 && exec $p \"${CLAUDE_PLUGIN_ROOT}/hooks/guard.py\"; done; exit 0",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "for p in python3 \"py -3\" python; do $p -c \"import sys; sys.exit(sys.version_info < (3, 8))\" </dev/null >/dev/null 2>&1 && exec $p \"${CLAUDE_PLUGIN_ROOT}/hooks/state_context.py\"; done; exit 0",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

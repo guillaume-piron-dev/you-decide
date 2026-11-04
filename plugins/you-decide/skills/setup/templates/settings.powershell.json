@@ -1,0 +1,49 @@
+{
+  "_comment": "Windows only: merge these lists into .claude/settings.json next to the Bash rules. Do not copy this _comment key.",
+  "permissions": {
+    "deny": [
+      "PowerShell(git push --force *)",
+      "PowerShell(git push -f *)",
+      "PowerShell(git filter-branch *)",
+      "PowerShell(Get-Content *.env*)",
+      "PowerShell(Get-Content *secrets*)",
+      "PowerShell(Get-Content *.pem*)",
+      "PowerShell(Get-Content *.key*)",
+      "PowerShell(Get-Content *.p12*)",
+      "PowerShell(Get-Content *.pfx*)"
+    ],
+    "ask": [
+      "PowerShell(git push *)",
+      "PowerShell(git reset *)",
+      "PowerShell(git rebase *)",
+      "PowerShell(git clean *)",
+      "PowerShell(git branch -D *)",
+      "PowerShell(git commit --amend*)",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(Start-Process *)",
+      "PowerShell(Set-ExecutionPolicy *)",
+      "PowerShell(curl.exe *)",
+      "PowerShell(wget.exe *)",
+      "PowerShell(Invoke-WebRequest *)",
+      "PowerShell(Invoke-RestMethod *)",
+      "PowerShell(Start-BitsTransfer *)",
+      "PowerShell(winget *)",
+      "PowerShell(npm install *)",
+      "PowerShell(npm publish *)",
+      "PowerShell(pnpm add *)",
+      "PowerShell(pnpm install *)",
+      "PowerShell(pip install *)",
+      "PowerShell(py -m pip *)",
+      "PowerShell(cargo add *)",
+      "PowerShell(cargo install *)",
+      "PowerShell(cargo publish *)",
+      "PowerShell(docker pull *)",
+      "PowerShell(docker push *)"
+    ],
+    "allow": [
+      "PowerShell(git status)",
+      "PowerShell(git diff *)",
+      "PowerShell(git log *)"
+    ]
+  }
+}

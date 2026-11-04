@@ -1,0 +1,15 @@
+{
+  "name": "you-decide",
+  "description": "A human-gated development method for Claude Code: the owner decides, Claude executes.",
+  "owner": {
+    "name": "Guillaume Piron"
+  },
+  "plugins": [
+    {
+      "name": "you-decide",
+      "source": "./plugins/you-decide",
+      "description": "You decide, Claude ships: a human-gated development method for Claude Code. Cheap session resumes, sourced decisions, tests first, independent diff review, step closure and guardrail hooks.",
+      "version": "0.1.0"
+    }
+  ]
+}
