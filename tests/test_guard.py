@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -11,7 +12,8 @@ import time
 import unittest
 from pathlib import Path
 
-HOOKS = Path(__file__).resolve().parents[1] / "plugins" / "you-decide" / "hooks"
+ROOT = Path(__file__).resolve().parents[1]
+HOOKS = ROOT / "hooks"
 # Built at runtime so that this file never contains a literal secret.
 FAKE_GH = "ghp" + "_" + "A1b2C3d4" * 5
 FAKE_KEY = "-----BEGIN " + "PRIVATE KEY-----\n" + ("MIIEvQIBADANBgkqhkiG9w0BAQEFAASC" * 5)
@@ -134,6 +136,28 @@ class WriteTests(unittest.TestCase):
                              raw=json.dumps({"tool_name": "Write", "tool_input": {
                                  "file_path": "a.txt", "content": "👍 " + FAKE_GH}}, ensure_ascii=False))
                          ["hookSpecificOutput"]["permissionDecision"], "deny")
+
+
+@unittest.skipUnless(shutil.which("sh"), "needs a POSIX sh (Git Bash on Windows)")
+class LauncherTests(unittest.TestCase):
+    """The commands in hooks.json, run the way Claude Code runs them."""
+
+    def run_hook(self, event: str, payload: dict) -> str:
+        hooks = json.loads((HOOKS / "hooks.json").read_text(encoding="utf-8"))
+        command = hooks["hooks"][event][0]["hooks"][0]["command"]
+        out = subprocess.run([shutil.which("sh"), "-c", command], input=json.dumps(payload).encode("utf-8"),
+                             capture_output=True, env={**os.environ, "CLAUDE_PLUGIN_ROOT": str(ROOT)}, timeout=30)
+        self.assertEqual(out.returncode, 0, out.stderr)
+        return out.stdout.decode("utf-8")
+
+    def test_guard_launcher(self):
+        out = self.run_hook("PreToolUse", {"tool_name": "Bash", "tool_input": {"command": "git push"}})
+        self.assertEqual(json.loads(out)["hookSpecificOutput"]["permissionDecision"], "ask")
+        self.assertEqual(self.run_hook("PreToolUse", {"tool_name": "Bash", "tool_input": {"command": "ls"}}), "")
+
+    def test_state_launcher_is_silent_without_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(self.run_hook("SessionStart", {"source": "compact", "cwd": tmp}), "")
 
 
 class StateContextTests(unittest.TestCase):

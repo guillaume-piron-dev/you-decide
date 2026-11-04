@@ -1,32 +1,30 @@
+<img src=".claude-plugin/icon.png" alt="You Decide icon" width="96">
+
 # You Decide — a human-gated development method for Claude Code
 
 **You decide. Claude ships.** · [Version française plus bas](#version-française)
 
-You Decide is a Claude Code plugin that pushes automation as far as it can go while keeping every strategic decision
-with a human. Claude researches, plans, writes the tests first, implements, gets reviewed by an independent agent,
-fixes what the review finds and commits locally. You choose the architecture, the dependencies, the trade-offs and
-anything that cannot be undone.
+You Decide is a plugin that pushes automation as far as it can go while keeping every strategic decision with a human.
+Claude researches, plans, writes the tests first, implements, gets reviewed by an independent agent, fixes what the
+review finds and commits locally. You choose the architecture, the dependencies, the trade-offs and anything that
+cannot be undone.
 
 It was extracted from the method I use to build a privacy-protection platform on my own with Claude Code (Rust and
-TypeScript, under EU regulations). It is project-agnostic: nothing in it depends on a language or a domain.
+TypeScript, under EU law). It depends on no language, no domain and no country: you set your jurisdictions at setup.
 
 ## Install
 
-In Claude Code:
+In a Claude Code session:
 
 ```
 /plugin marketplace add guillaume-piron-dev/you-decide
 /plugin install you-decide@you-decide
 ```
 
-Then, in your project:
+On Claude Code 2.1.275 or later, one command does both: `/plugin install you-decide --marketplace guillaume-piron-dev/you-decide`.
 
-```
-/you-decide:setup
-```
-
-`setup` detects your stack, asks you a few multiple-choice questions and shows you a plan. It writes nothing before you
-approve: a `CLAUDE.md` under 200 lines, a state file, permission rules and, depending on the level you pick, the logs.
+Then, in your project, run `/you-decide:setup`. It detects your stack, asks a few multiple-choice questions and shows
+you a plan. It writes nothing before you approve.
 
 ## The daily loop
 
@@ -48,25 +46,49 @@ advice).
 | Level | For | What it adds |
 |---|---|---|
 | Light | prototype, script, experiment | `CLAUDE.md` + `docs/state.md` |
-| Standard | a product in progress | + requests log, findings log, decision records |
+| Standard | a product in progress | + plan, requests log, findings log, decision records |
 | Strict | regulated, sensitive or critical work | + AI usage log, traceability matrix, compliance question file |
 
-## Guardrails (hooks)
+## Adapt it to your country
 
-- **Before a shell command** (Bash or PowerShell): asks for your "yes" before `git push`, history rewrites,
-  discarding local changes, recursive deletions, destructive SQL, migration rollbacks, package publishing,
-  data-sending network calls (calls to `localhost` are not interrupted), `curl | sh`, remote copies, cloud and
-  infrastructure changes. Blocks the usual commands that would print a secret file (`cat`, `grep`, `Get-Content`…
-  on `.env` or key files) and commands that contain a token.
-- **Before a file write**: blocks high-confidence secrets (private keys, cloud and API tokens); asks for likely
-  credentials, `.env` files and destructive SQL in migrations.
-- **After a compaction or `/clear`**: re-injects `docs/state.md`, so your latest decisions survive the summary.
+`setup` asks where you, your users, your data and your hosting are, and writes those jurisdictions into your
+`CLAUDE.md`. The `compliance` and `decide` skills then work from them, with a list of official legislation sites and
+regulators for the EU, France, the UK, Switzerland, the US, Canada, Brazil, Japan, South Korea, China, India,
+Singapore, Australia, New Zealand, South Africa, Nigeria and Kenya, plus international standards
+([skills/compliance/references/regions.md](skills/compliance/references/regions.md)). The same file lists the
+references I use myself for the EU and France. Claude answers in your language; the plugin files are in English.
 
-The hooks are about 450 lines of standard-library Python (`plugins/you-decide/hooks/`), covered by tests in
-`tests/`. Read them before installing: a plugin runs with your privileges. They need Python 3.8 or later, found as
-`python3`, `py -3` or `python`. On Windows, Claude Code runs hooks through Git Bash (installed with Git for Windows);
-the Microsoft Store `python3` shortcut is detected and skipped. They are pattern-based: they catch the usual commands and token formats, not every
-possible one. **They are guardrails, not a security guarantee.** Keep secrets out of the project folder.
+## Where it works
+
+| | claude.ai chat | Cowork | Claude Code |
+|---|---|---|---|
+| The 9 skills | ✓ | ✓ | ✓ |
+| `reviewer` subagent | — | ✓ | ✓ |
+| Hooks (guardrails, state re-injection) | — | ✓ | ✓ |
+
+## What this plugin runs, changes and sends
+
+- **Sends nothing.** No network call, no telemetry, no package download. Web searches happen only when a skill asks
+  Claude to research, through Claude's own tools and your permission settings.
+- **Hooks** (`hooks/`, about 450 lines of standard-library Python plus two small shell launchers, covered by tests in
+  `tests/`) run locally on each shell command and file write, and after a compaction or `/clear`:
+  - before a shell command (Bash or PowerShell), they ask for your "yes" before `git push`, history rewrites,
+    discarding local changes, recursive deletions, destructive SQL, migration rollbacks, package publishing,
+    data-sending network calls (calls to `localhost` are not interrupted), `curl | sh`, remote copies, cloud and
+    infrastructure changes; they block the usual commands that would print a secret file (`cat`, `grep`,
+    `Get-Content`… on `.env` or key files) and commands that contain a token;
+  - before a file write, they block high-confidence secrets (private keys, cloud and API tokens) and ask for likely
+    credentials, `.env` files and destructive SQL in migrations;
+  - after a compaction or `/clear`, they re-inject the first 150 lines of `docs/state.md` if it exists.
+  They need Python 3.8 or later, found as `python3`, `py -3` or `python`. On Windows, Claude Code runs hooks through
+  Git Bash (installed with Git for Windows); the Microsoft Store `python3` shortcut is detected and skipped. They are
+  pattern-based: they catch the usual commands and token formats, not every possible one.
+- **`setup` changes your project only after you approve its plan**: it writes `CLAUDE.md`, files under `docs/`, and
+  permission rules in `.claude/settings.json` (merged with yours; it never loosens a `deny` rule).
+- **The other skills** write only the project files they name (state, logs, decision records) and make local commits.
+  None of them pushes, publishes or deletes without your explicit "yes".
+
+**The hooks and permission rules are guardrails, not a security guarantee.** Keep secrets out of the project folder.
 
 ## Cost
 
@@ -76,7 +98,8 @@ A skill's full text loads only when it runs.
 ## Limits
 
 - It does not replace stack-specific skills (React, Rust, Django…). Combine them.
-- The `compliance` skill prepares sourced questions for a lawyer or regulator. It never gives legal advice.
+- The `compliance` skill prepares sourced questions for a lawyer or regulator. It never gives legal advice, and its
+  list of official sources is a starting point to check, not a legal reference.
 - Tested on Linux and on Windows 11 (Git Bash, Python 3.13). Not yet tested on macOS: please report what breaks.
 - It is opinionated: one session = one task, plan before code, findings fixed in the flow. If that is not how you
   want to work, it is not for you.
@@ -85,8 +108,8 @@ A skill's full text loads only when it runs.
 
 ```
 python3 -m unittest discover -s tests -v
-claude plugin validate .
-claude --plugin-dir ./plugins/you-decide
+claude plugin validate . --strict
+claude --plugin-dir .
 ```
 
 ## License
@@ -105,7 +128,8 @@ indépendant, corrige ce que la relecture trouve et commite en local. Toi, tu ch
 les compromis et tout ce qui est irréversible.
 
 Il est tiré de la méthode que j'utilise pour développer seul, avec Claude Code, une plateforme de protection de la vie
-privée (Rust et TypeScript, droit européen). Il ne dépend d'aucun langage ni d'aucun domaine.
+privée (Rust et TypeScript, droit européen). Il ne dépend d'aucun langage, d'aucun domaine ni d'aucun pays : tu
+indiques tes juridictions au démarrage.
 
 ### Installation
 
@@ -114,6 +138,7 @@ privée (Rust et TypeScript, droit européen). Il ne dépend d'aucun langage ni 
 /plugin install you-decide@you-decide
 ```
 
+Depuis Claude Code 2.1.275, une seule commande suffit : `/plugin install you-decide --marketplace guillaume-piron-dev/you-decide`.
 Puis, dans ton projet : `/you-decide:setup`. La skill détecte ta stack, te pose quelques questions à choix et te
 montre un plan. Elle n'écrit rien avant ton accord.
 
@@ -133,19 +158,28 @@ montre un plan. Elle n'écrit rien avant ton accord.
 Léger (prototype, script), standard (produit en cours), exigeant (projet réglementé ou sensible). Chacun n'installe que
 ce dont il a besoin.
 
-### Garde-fous
+### Adapté à ton pays
 
-Les hooks demandent ton accord avant un push, une réécriture d'historique, une suppression récursive, du SQL
-destructif, une publication ou un envoi réseau (les appels à `localhost` ne sont pas interrompus). Ils bloquent les
-commandes courantes qui afficheraient un fichier secret et l'écriture de secrets évidents dans les fichiers, et
-réinjectent le fichier d'état après une compaction. Ils reconnaissent les commandes et formats de jetons usuels, pas
-tous les cas possibles : ce sont des garde-fous, pas une garantie de sécurité. Aucun secret ne doit se trouver dans le
-dossier du projet.
+`setup` te demande où se trouvent toi, tes utilisateurs, tes données et ton hébergement, et l'écrit dans ton
+`CLAUDE.md`. Les skills `compliance` et `decide` s'en servent, avec les sites officiels de législation et les autorités
+de contrôle de 17 régions du monde et les normes internationales
+([skills/compliance/references/regions.md](skills/compliance/references/regions.md)). Mes propres références (UE et
+France) y figurent aussi. Claude te répond dans ta langue.
+
+### Ce que le plugin exécute, modifie et envoie
+
+Il n'envoie rien sur le réseau et ne télécharge rien. Les hooks tournent en local : ils demandent ton accord avant un
+push, une réécriture d'historique, une suppression récursive, du SQL destructif, une publication ou un envoi réseau (les
+appels à `localhost` ne sont pas interrompus), bloquent les commandes courantes qui afficheraient un fichier secret et
+l'écriture de secrets évidents, et réinjectent le fichier d'état après une compaction. Ils demandent Python 3.8 ou plus ;
+sous Windows, Claude Code les exécute via Git Bash. `setup` n'écrit dans ton projet (`CLAUDE.md`, `docs/`, règles de
+permission de `.claude/settings.json`, fusionnées sans jamais assouplir un `deny`) qu'après ton accord sur son plan.
+Ce sont des garde-fous, pas une garantie de sécurité : aucun secret ne doit se trouver dans le dossier du projet.
 
 ### Limites
 
-Les hooks demandent Python 3.8 ou plus ; sous Windows, Claude Code les exécute via Git Bash (fourni avec Git pour
-Windows). Le kit ne remplace pas les skills propres à une stack. La skill `compliance` prépare des questions sourcées pour un
-juriste ; elle ne donne jamais d'avis juridique. Testé sous Linux et Windows 11, pas encore sous macOS : signale ce qui casse.
+Le kit ne remplace pas les skills propres à une stack. La skill `compliance` prépare des questions sourcées pour un
+juriste ; elle ne donne jamais d'avis juridique, et sa liste de sources officielles est un point de départ à vérifier.
+Testé sous Linux et Windows 11, pas encore sous macOS : signale ce qui casse.
 
 Licence Apache-2.0.

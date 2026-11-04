@@ -11,6 +11,9 @@ description: Handles a legal or regulatory question (privacy, consumer law, AI r
 - Read primary sources (official journals, legislation databases, regulator guidance) before citing them. If
   automatic access is blocked, ask the owner to open the page instead of citing from memory.
 - Tags: ✅ primary source read · 🟡 secondary source · 🧠 unverified.
+- Start from the jurisdictions written in CLAUDE.md (section 2). Official legislation sites and regulators by region
+  are listed in `references/regions.md` in this skill's folder: read only the rows you need. If CLAUDE.md names no
+  jurisdiction, ask the owner which countries or regions apply before answering.
 
 ## One file: `docs/compliance_questions.md`
 - Search first: `grep -n "^### Q-" docs/compliance_questions.md`, then a keyword. Read only the matching entry.

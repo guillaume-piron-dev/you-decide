@@ -1,0 +1,3 @@
+# Keep LF everywhere: the hook launchers are POSIX shell scripts.
+* text=auto eol=lf
+*.png binary

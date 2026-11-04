@@ -33,8 +33,12 @@ Round 1:
 4. **Red lines**: does the project have rules that must never be broken (legal, safety, privacy, contractual)?
    If yes, collect them in round 2, in the owner's own words.
 
-Round 2, only for what is still unknown: naming conventions, commit convention (Conventional Commits, sign-off,
-`AI-Assisted` trailer), the plan or roadmap file, a short map of the main folders.
+Round 2, only for what is still unknown:
+- **Jurisdictions**: where the owner, the users, the data and the hosting are (countries or regions). They go into
+  CLAUDE.md section 2; the `compliance` and `decide` skills use them, with the official sources by region listed in
+  the `compliance` skill's `references/regions.md`.
+- Naming conventions, commit convention (Conventional Commits, sign-off, `AI-Assisted` trailer), the plan or
+  roadmap file, a short map of the main folders.
 
 ## 3. Show the plan
 List every file to create or modify with its path, and the commands that will go into CLAUDE.md.

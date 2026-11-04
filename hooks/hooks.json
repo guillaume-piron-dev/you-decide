@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "for p in python3 \"py -3\" python; do $p -c \"import sys; sys.exit(sys.version_info < (3, 8))\" </dev/null >/dev/null 2>&1 && exec $p \"${CLAUDE_PLUGIN_ROOT}/hooks/guard.py\"; done; exit 0",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/guard.sh\"",
             "timeout": 10
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "for p in python3 \"py -3\" python; do $p -c \"import sys; sys.exit(sys.version_info < (3, 8))\" </dev/null >/dev/null 2>&1 && exec $p \"${CLAUDE_PLUGIN_ROOT}/hooks/state_context.py\"; done; exit 0",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/state_context.sh\"",
             "timeout": 10
           }
         ]

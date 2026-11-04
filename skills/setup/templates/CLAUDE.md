@@ -20,7 +20,9 @@ specific paths in `.claude/rules/`.
 9. **Always state the path** of every file created or modified.
 {{extra_owner_rules}}
 
-## 2. Red lines of the project
+## 2. Jurisdictions and red lines
+**Jurisdictions** (owner, users, data, hosting): {{jurisdictions}}. Official sources by region: the `compliance` skill.
+
 <!-- Rules that must never be broken: legal, safety, privacy, contractual. The reviewer checks every diff against
 them. Write them in the owner's words. Delete this section if there are none. -->
 {{red_lines}}

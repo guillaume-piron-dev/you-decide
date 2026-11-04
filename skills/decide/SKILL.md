@@ -11,7 +11,7 @@ description: Turns a structural choice into a sourced decision that the owner ma
 - Never invent a mechanism, delay, workaround or default that the owner has not decided. Present it as an option.
 
 ## 2. Screen every service, tool or dependency (answers written down)
-1. Where does the data go, and under which jurisdiction?
+1. Where does the data go, and under which jurisdiction? Compare with the project's jurisdictions in CLAUDE.md.
 2. Who operates it, and under which law? (A company subject to a foreign law stays subject to it wherever it hosts.)
 3. License, and is it compatible with the project's license?
 4. Cost now and at scale. Free until the end of development?
