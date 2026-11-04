@@ -116,9 +116,10 @@ claude plugin validate . --strict
 claude --plugin-dir .
 ```
 
-## License
+## License and privacy
 
-Apache-2.0. Issues and pull requests are welcome.
+Apache-2.0. The plugin collects and sends nothing: see [PRIVACY.md](PRIVACY.md). Issues and pull requests are
+welcome.
 
 ---
 
@@ -188,4 +189,4 @@ Le kit ne remplace pas les skills propres à une stack. La skill `compliance` pr
 juriste ; elle ne donne jamais d'avis juridique, et sa liste de sources officielles est un point de départ à vérifier.
 Testé sous Linux et Windows 11, pas encore sous macOS : signale ce qui casse.
 
-Licence Apache-2.0.
+Licence Apache-2.0. Confidentialité : le plugin ne collecte et n'envoie rien ([PRIVACY.md](PRIVACY.md)).

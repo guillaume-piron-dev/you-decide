@@ -9,7 +9,7 @@
       "name": "you-decide",
       "source": "./",
       "description": "You decide, Claude ships: a human-gated development method for Claude Code. Cheap session resumes, sourced decisions, tests first, independent diff review, step closure and guardrail hooks.",
-      "version": "0.2.1"
+      "version": "0.2.2"
     }
   ]
 }

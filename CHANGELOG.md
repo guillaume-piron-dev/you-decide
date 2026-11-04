@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 — 2026-11-04
+- PRIVACY.md (the plugin collects and sends nothing), and documentation, support, privacy policy and terms links
+  in `plugin.json` for the directory listing.
+
 ## 0.2.1 — 2026-11-04
 - README: states that `guard.py` names credential files only to block them, and that the tests use fake values
   and make no network call.

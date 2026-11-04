@@ -1,7 +1,7 @@
 {
   "name": "you-decide",
   "displayName": "You Decide",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "You decide, Claude ships: a human-gated development method for Claude Code. Cheap session resumes, sourced decisions, tests first, independent diff review, step closure and guardrail hooks.",
   "author": {
     "name": "Guillaume Piron",
@@ -19,5 +19,9 @@
     "code-review",
     "guardrails",
     "compliance"
-  ]
+  ],
+  "documentationUrl": "https://github.com/guillaume-piron-dev/you-decide#readme",
+  "supportUrl": "https://github.com/guillaume-piron-dev/you-decide/issues",
+  "privacyPolicyUrl": "https://github.com/guillaume-piron-dev/you-decide/blob/main/PRIVACY.md",
+  "termsOfServiceUrl": "https://github.com/guillaume-piron-dev/you-decide/blob/main/LICENSE"
 }
