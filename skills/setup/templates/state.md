@@ -18,3 +18,8 @@ Updated: {{date}} · Level: {{level}} · Plan: `docs/plan.md` (standard and stri
 
 ## Measured baselines (metric, value, date, machine, command)
 -
+
+## Update log
+<!-- Newest first, one dated entry per step: "- YYYY-MM-DD: what changed". Older entries move verbatim to
+docs/memory/state_history.md (skill `memory`, `move`); they are never deleted. -->
+- {{date}}: method set up at level {{level}}

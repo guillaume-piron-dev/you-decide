@@ -155,6 +155,10 @@ class LauncherTests(unittest.TestCase):
         self.assertEqual(json.loads(out)["hookSpecificOutput"]["permissionDecision"], "ask")
         self.assertEqual(self.run_hook("PreToolUse", {"tool_name": "Bash", "tool_input": {"command": "ls"}}), "")
 
+    def test_memory_backup_launcher_is_silent_without_memory_config(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(self.run_hook("PreCompact", {"transcript_path": "", "cwd": tmp}), "")
+
     def test_state_launcher_is_silent_without_state(self):
         with tempfile.TemporaryDirectory() as tmp:
             self.assertEqual(self.run_hook("SessionStart", {"source": "compact", "cwd": tmp}), "")

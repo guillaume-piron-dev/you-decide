@@ -11,7 +11,10 @@ Goal: be operational after reading less than ~10,000 tokens. Never read large lo
 Light level (only CLAUDE.md and `docs/state.md` exist): skip the logs and decision records below; check new requests
 against CLAUDE.md and `docs/state.md`, and treat the state file's next actions as the plan.
 
-1. Read `docs/state.md`, the only file read in full. If it is missing, suggest `/you-decide:setup` and stop.
+0. After a compaction, the resume context is already in the conversation (hook); keep the memory with the `memory`
+   skill and re-read each file it names before acting.
+1. Read `docs/state.md`, the only file read in full. If it is missing, suggest `/you-decide:setup` and stop. To know
+   where to search: `docs/memory/map/README.md` (standard and strict levels).
 2. New request from the owner? Log it first, in their exact words (skill `log`). Flag any contradiction with an earlier
    request, rule or decision (grep the topic in `docs/requests_log.md` and `docs/decisions/`).
 3. Read only what the task touches, by targeted search:

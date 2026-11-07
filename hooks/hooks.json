@@ -1,5 +1,5 @@
 {
-  "description": "You Decide guardrails: ask before network sends and irreversible commands, block secrets written to files, re-inject the state file after a compaction or /clear.",
+  "description": "You Decide guardrails: ask before network sends and irreversible commands, block secrets written to files; project memory: back up the transcript before a compaction (when enabled) and give the resume context after a compaction or /clear.",
   "hooks": {
     "PreToolUse": [
       {
@@ -21,6 +21,17 @@
             "type": "command",
             "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/state_context.sh\"",
             "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/memory_backup.sh\"",
+            "timeout": 60
           }
         ]
       }

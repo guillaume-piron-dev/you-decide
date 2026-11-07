@@ -5,7 +5,9 @@ description: Appends to the project logs without reading them in full. Records t
 
 # Keep the logs without re-reading them
 
-Logs are **append-only**: never delete a line. Strike it (`~~…~~` + date) or change its state.
+Logs are **append-only**: never delete a line. To withdraw a row, write it in its state column
+(`withdrawn YYYY-MM-DD: reason`); never edit the owner's words or a finding's text: the `memory` skill's guard checks
+them. Closed rows of past months are moved to volumes by the `memory` skill (`move`), never by hand.
 If a log file does not exist, the project runs at the light level: skip that log and say so once.
 
 ## Requests: `docs/requests_log.md`
@@ -18,12 +20,17 @@ If a log file does not exist, the project runs at the light level: skip that log
 
 ## Findings: `docs/findings_log.md`
 - Row: `| ID | Review (date, scope) | Severity | Finding | Handling | State | Target | Proof |`
-- ID `F-<step>-<n>`. Last number: `grep -o "F-<step>-[0-9]*" docs/findings_log.md | sort -V | tail -1`.
+- ID `F-<step>-<n>`. Last number, log and volumes:
+  `grep -rho "F-<step>-[0-9]*" docs/findings_log.md docs/memory/volumes/findings/ | sort -V | tail -1`.
 - Severity: `blocking`, `important`, `minor`, `detail`. Handling: `fixed`, `action`, `research`, `expert` (with the
   question id), `decision`. State: `done` or `open`.
 - Target: the smallest sub-step that will write the code the finding depends on. Proof: file:line, test name, or where
   the task is written. Never empty.
 - Rule: a finding on code or a document that already exists is fixed in the current step, whatever its severity.
+
+## Multiple-choice answers: `docs/questions_answers.md`
+- After each answer, the `memory` skill's `qa` records the question, its options and the answer word for word; the
+  request row points there instead of paraphrasing it.
 
 ## Deferred items: in the plan file named in `docs/state.md`
 - Row `| Milestone | Item | Origin |` at the end of the target milestone's rows. Deferred items are part of that

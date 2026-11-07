@@ -66,9 +66,12 @@ them. Write them in the owner's words. Delete this section if there are none. --
 6. Facts are sourced: ✅ primary source read · 🟡 secondary · 📣 vendor claim · 🧠 unverified · ❓ open question.
 7. Questions to the owner: multiple-choice when possible, recommended option first, research done beforehand.
 8. Close a step with `/you-decide:close-step`, a milestone with `/you-decide:milestone`.
+9. Memory: skill `memory` after each multiple-choice answer, at each step end and after a compaction. Nothing lives
+   only in the conversation; nothing is shortened to save space: it is moved. <!-- level: standard -->
 
 ## 9. Where to find what
 - Current state, the only file read in full when resuming: `docs/state.md`
 - Requests log: `docs/requests_log.md` · findings log: `docs/findings_log.md` <!-- level: standard -->
 - Decisions: `docs/decisions/` · plan: `docs/plan.md` <!-- level: standard -->
+- Where to search: `docs/memory/map/` · questions and answers: `docs/questions_answers.md` <!-- level: standard -->
 {{project_map}}

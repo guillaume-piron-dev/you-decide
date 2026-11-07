@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — 2026-11-07
+- New `memory` skill and `skills/memory/scripts/yd_memory.py` (standard library, tested): multiple-choice answers
+  recorded word for word from the transcript, conservation guard (nothing lost, shortened or rewritten without saying
+  so), volumes for closed rows and old state entries (moved verbatim, verified), reference map with open items and ids
+  defined nowhere, resume context after a compaction, completeness review, and three opt-in features: transcript
+  backups before a compaction, a private journal outside the repository, a light copy for a claude.ai Project.
+- `PreCompact` hook; the `SessionStart` hook gives the memory's resume context when the project has a memory config.
+- `setup`, `session`, `log`, `close-step`, `milestone`, `decide`, the CLAUDE.md and state templates, README and
+  PRIVACY updated accordingly. Decision records are titled `# D-NNNN — Title`.
+
 ## 0.2.2 — 2026-11-04
 - PRIVACY.md (the plugin collects and sends nothing), and documentation, support, privacy policy and terms links
   in `plugin.json` for the directory listing.

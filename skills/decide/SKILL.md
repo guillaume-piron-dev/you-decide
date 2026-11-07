@@ -26,7 +26,8 @@ One unfavourable answer: do not propose the option, or propose it and say so pla
 - If the choice is cheap to reverse, say so and propose a default instead of asking.
 
 ## 4. Record
-- `docs/decisions/NNNN_short_title.md` from `docs/decisions/0000_template.md`: context, options with sourced facts,
+- `docs/decisions/NNNN_short_title.md` from `docs/decisions/0000_template.md`, titled `# D-NNNN — Title` so that
+  the memory map finds it: context, options with sourced facts,
   the decision **taken by the owner** with its date, consequences, and what would make us revisit it.
   Next number: `ls docs/decisions | sort | tail -1`.
 - Log the owner's answer in `docs/requests_log.md` (skill `log`). Update `docs/state.md` if the next actions change.

@@ -1,4 +1,4 @@
-# NNNN — Title
+# D-NNNN — Title
 
 - **Date**: YYYY-MM-DD · **Status**: proposed | decided | superseded by NNNN
 - **Decided by**: the owner

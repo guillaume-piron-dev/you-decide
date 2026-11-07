@@ -33,6 +33,7 @@ you a plan. It writes nothing before you approve.
 | Start or resume | `/you-decide:session` | Reads one state file (under 10k tokens), logs your request in your own words, proposes a plan before any code |
 | Before a costly choice | `/you-decide:decide` | Researches the options, screens each dependency or service, asks you to choose, writes a decision record |
 | Implement | `/you-decide:story-to-tests` | One test per acceptance criterion and edge case, proven to fail, then the smallest code that passes |
+| After each multiple-choice answer | `/you-decide:memory` | Records the question, its options and your answer word for word; at each step end it moves closed rows to volumes, refreshes the reference map and guards the logs against loss |
 | Before the commit | `/you-decide:review` | An independent reviewer subagent reads the diff only; every finding is fixed in the flow |
 | Finish | `/you-decide:close-step` | Local CI green, findings closed, state updated, local commit. Never a push without your "yes" |
 | End of a phase | `/you-decide:milestone` | Full re-verification, comparison with the best, measured baselines, clean hand-off |
@@ -46,8 +47,8 @@ advice).
 | Level | For | What it adds |
 |---|---|---|
 | Light | prototype, script, experiment | `CLAUDE.md` + `docs/state.md` |
-| Standard | a product in progress | + plan, requests log, findings log, decision records |
-| Strict | regulated, sensitive or critical work | + AI usage log, traceability matrix, compliance question file |
+| Standard | a product in progress | + plan, requests log, findings log, decision records, project memory (answers word for word, map, loss guard, volumes) |
+| Strict | regulated, sensitive or critical work | + AI usage log, traceability matrix, compliance question file, transcript backups |
 
 ## Adapt it to your country
 
@@ -62,7 +63,7 @@ references I use myself for the EU and France. Claude answers in your language; 
 
 | | claude.ai chat | Cowork | Claude Code |
 |---|---|---|---|
-| The 9 skills | ✓ | ✓ | ✓ |
+| The 10 skills | ✓ | ✓ | ✓ |
 | `reviewer` subagent | — | ✓ | ✓ |
 | Hooks (guardrails, state re-injection) | — | ✓ | ✓ |
 
@@ -70,8 +71,8 @@ references I use myself for the EU and France. Claude answers in your language; 
 
 - **Sends nothing.** No network call, no telemetry, no package download. Web searches happen only when a skill asks
   Claude to research, through Claude's own tools and your permission settings.
-- **Hooks** (`hooks/`, about 450 lines of standard-library Python plus two small shell launchers, covered by tests in
-  `tests/`) run locally on each shell command and file write, and after a compaction or `/clear`:
+- **Hooks** (`hooks/`: standard-library Python behind three small shell launchers, covered by tests in `tests/`) run
+  locally on each shell command and file write, before a compaction, and after a compaction or `/clear`:
   - before a shell command (Bash or PowerShell), they ask for your "yes" before `git push`, history rewrites,
     discarding local changes, recursive deletions, destructive SQL, migration rollbacks, package publishing,
     data-sending network calls (calls to `localhost` are not interrupted), `curl | sh`, remote copies, cloud and
@@ -79,7 +80,10 @@ references I use myself for the EU and France. Claude answers in your language; 
     `Get-Content`… on `.env` or key files) and commands that contain a token;
   - before a file write, they block high-confidence secrets (private keys, cloud and API tokens) and ask for likely
     credentials, `.env` files and destructive SQL in migrations;
-  - after a compaction or `/clear`, they re-inject the first 150 lines of `docs/state.md` if it exists.
+  - after a compaction or `/clear`, they re-inject `docs/state.md` (with project memory: also the open rows of the
+    logs and the last answers, after appending any new answer to `docs/questions_answers.md`);
+  - before a compaction, with project memory only, they append new answers to `docs/questions_answers.md` and run the
+    transcript backup and the journal if you enabled them.
   `guard.py` names credential files (`.env`, `.git-credentials`, private keys…) and credential variables only to
   recognise and block commands that would print them: it never opens, reads or sends any of them. The tests in
   `tests/` use fake values, `example.org` addresses and variable names such as `API_KEY` only as inputs to the guard;
@@ -87,6 +91,14 @@ references I use myself for the EU and France. Claude answers in your language; 
   They need Python 3.8 or later, found as `python3`, `py -3` or `python`. On Windows, Claude Code runs hooks through
   Git Bash (installed with Git for Windows); the Microsoft Store `python3` shortcut is detected and skipped. They are
   pattern-based: they catch the usual commands and token formats, not every possible one.
+- **Project memory** (standard and strict levels; `skills/memory/scripts/yd_memory.py`, standard-library Python,
+  covered by `tests/test_memory.py`): it reads this project's Claude Code transcripts on your machine to record your
+  answers to multiple-choice questions, and writes only under `docs/` (answers, map, volumes, conservation register).
+  Only if you enable them in `docs/memory/config.json`, it also writes outside the repository: a gzip backup of the
+  transcript before each compaction (`~/.you-decide/transcripts/<project>/`, run by the `PreCompact` hook), a private
+  journal of your messages (`~/.you-decide/journal/<project>.md`). It can also prepare documents for you to upload to a
+  claude.ai Project, in `.you-decide/project_sync/` inside the project, and refuses to do so until that folder is
+  ignored by git. Without `docs/memory/config.json`, the memory hooks do nothing.
 - **`setup` changes your project only after you approve its plan**: it writes `CLAUDE.md`, files under `docs/`, and
   permission rules in `.claude/settings.json` (merged with yours; it never loosens a `deny` rule).
 - **The other skills** write only the project files they name (state, logs, decision records) and make local commits.
@@ -96,7 +108,7 @@ references I use myself for the EU and France. Claude answers in your language; 
 
 ## Cost
 
-About 870 tokens are added to every session (skill and agent descriptions), as measured by `claude plugin details`.
+About 1,020 tokens are added to every session (skill and agent descriptions), as measured by `claude plugin details`.
 A skill's full text loads only when it runs.
 
 ## Limits
@@ -154,14 +166,15 @@ montre un plan. Elle n'écrit rien avant ton accord.
 | Démarrer ou reprendre | `/you-decide:session` | Lit un seul fichier d'état, note ta demande avec tes mots, propose un plan avant le code |
 | Avant un choix coûteux | `/you-decide:decide` | Recherche les options, passe chaque dépendance au crible, te fait choisir, écrit la décision |
 | Implémenter | `/you-decide:story-to-tests` | Un test par critère d'acceptation et cas limite, puis le plus petit code qui passe |
+| Après chaque réponse à une question à choix | `/you-decide:memory` | Note la question, ses options et ta réponse mot pour mot ; en fin d'étape, range les lignes closes en volumes, met à jour la carte des références et garde les journaux contre toute perte |
 | Avant le commit | `/you-decide:review` | Un sous-agent relecteur indépendant lit le diff ; chaque constat est corrigé dans la foulée |
 | Finir | `/you-decide:close-step` | CI locale verte, constats fermés, état à jour, commit local. Jamais de push sans ton « oui » |
 | Fin de phase | `/you-decide:milestone` | Revérification complète, comparaison avec les meilleurs, mesures réelles, passation propre |
 
 ### Trois niveaux
 
-Léger (prototype, script), standard (produit en cours), exigeant (projet réglementé ou sensible). Chacun n'installe que
-ce dont il a besoin.
+Léger (prototype, script), standard (produit en cours, avec la mémoire du projet), exigeant (projet réglementé ou
+sensible, avec la sauvegarde des transcriptions). Chacun n'installe que ce dont il a besoin.
 
 ### Adapté à ton pays
 
@@ -173,7 +186,10 @@ France) y figurent aussi. Claude te répond dans ta langue.
 
 ### Ce que le plugin exécute, modifie et envoie
 
-Il n'envoie rien sur le réseau et ne télécharge rien. Les hooks tournent en local : ils demandent ton accord avant un
+Il n'envoie rien sur le réseau et ne télécharge rien. La mémoire du projet lit les transcriptions locales de Claude
+Code pour noter tes réponses et n'écrit que sous `docs/` ; seulement si tu les actives, elle écrit hors du dépôt une
+sauvegarde des transcriptions avant chaque compaction, un journal privé de tes messages et les documents à charger dans
+un Projet claude.ai. Les hooks tournent en local : ils demandent ton accord avant un
 push, une réécriture d'historique, une suppression récursive, du SQL destructif, une publication ou un envoi réseau (les
 appels à `localhost` ne sont pas interrompus), bloquent les commandes courantes qui afficheraient un fichier secret et
 l'écriture de secrets évidents, et réinjectent le fichier d'état après une compaction. `guard.py` ne cite les fichiers d'identifiants (`.env`, `.git-credentials`, clés privées…) que pour reconnaître et

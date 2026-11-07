@@ -37,6 +37,9 @@ Round 2, only for what is still unknown:
 - **Jurisdictions**: where the owner, the users, the data and the hosting are (countries or regions). They go into
   CLAUDE.md section 2; the `compliance` and `decide` skills use them, with the official sources by region listed in
   the `compliance` skill's `references/regions.md`.
+- **Memory options** (standard and strict): a gzip backup of the transcript before each compaction, kept outside the
+  repository (recommended at strict, it holds the whole conversation); a private journal of the owner's messages, word
+  for word, outside the repository; a light copy of chosen documents for a claude.ai Project.
 - Naming conventions, commit convention (Conventional Commits, sign-off, `AI-Assisted` trailer), the plan or
   roadmap file, a short map of the main folders.
 
@@ -55,6 +58,8 @@ List every file to create or modify with its path, and the commands that will go
 | `docs/ai_usage.md` |  |  | ✓ |
 | `docs/traceability.csv` |  |  | ✓ |
 | `docs/compliance_questions.md` |  |  | ✓ |
+| `docs/memory/config.json` (skill `memory`, `init`) |  | ✓ | ✓ |
+| `.you-decide/` added to `.gitignore` |  | ✓ | ✓ |
 
 ## 4. Ask approval, then write
 - One AskUserQuestion: Approve / Change something / Cancel.
@@ -71,12 +76,15 @@ List every file to create or modify with its path, and the commands that will go
   If the file exists, merge lists (union), keep every existing entry, **never loosen a `deny`**, and show the diff.
 - Keep `CLAUDE.md` under 200 lines (`wc -l CLAUDE.md`). Procedures belong in skills; rules that only matter for some
   paths go in `.claude/rules/` with `paths:` frontmatter.
+- Memory (standard and strict): run the `memory` skill's `init --level <level>`, then set the options the owner
+  chose in `docs/memory/config.json` (`transcript_backup`, `journal`, `project_sync`); add `.you-decide/` to
+  `.gitignore`. `docs/questions_answers.md` is created by the first `qa`.
 - If `.gitignore` lacks `.env` and `.env.*` (except examples), propose adding them. The `deny` rules also hide
   `.env.example` from Claude: if the project needs one, suggest naming it `env.example`.
 
 ## 5. Report
-Every created or modified file with its path, the level chosen, and the four commands to remember:
-`/you-decide:session` (start or resume), `/you-decide:decide` (before a costly choice),
-`/you-decide:close-step` (finish a step), `/you-decide:milestone` (close a milestone).
+Every created or modified file with its path, the level chosen, and the five commands to remember:
+`/you-decide:session` (start or resume), `/you-decide:decide` (before a costly choice), `/you-decide:memory` (after
+each multiple-choice answer), `/you-decide:close-step` (finish a step), `/you-decide:milestone` (close a milestone).
 Remind the owner that hooks and permissions are guardrails, not a security guarantee: secrets must never be in the
 project folder.
